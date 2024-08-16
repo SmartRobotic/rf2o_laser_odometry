@@ -36,7 +36,7 @@ public:
 
 public:
 
-  bool publish_tf, new_scan_available;
+  bool publish_tf, new_scan_available, lock_x_z;
 
   double freq;
 
@@ -77,6 +77,7 @@ CLaserOdometry2DNode::CLaserOdometry2DNode() :
   pn.param<std::string>("base_frame_id", base_frame_id, "/base_link");
   pn.param<std::string>("odom_frame_id", odom_frame_id, "/odom");
   pn.param<bool>("publish_tf", publish_tf, true);
+  pn.param<bool>("lock_x_z", lock_x_z, false);
   pn.param<std::string>("init_pose_from_topic", init_pose_from_topic, "/base_pose_ground_truth");
   pn.param<double>("freq",freq,10.0);
   pn.param<bool>("verbose", verbose, true);
@@ -170,7 +171,7 @@ void CLaserOdometry2DNode::process(const ros::TimerEvent&)
   }
   else
   {
-    ROS_WARN("Waiting for laser_scans....") ;
+    ROS_DEBUG("Waiting for laser_scans....") ;
   }
 }
 
@@ -220,7 +221,7 @@ void CLaserOdometry2DNode::publish()
   {
     //ROS_INFO("[rf2o] Publishing TF: [base_link] to [odom]");
     geometry_msgs::TransformStamped odom_trans;
-    odom_trans.header.stamp = ros::Time::now();
+    odom_trans.header.stamp = current_scan_time + ros::Duration(1);
     odom_trans.header.frame_id = odom_frame_id;
     odom_trans.child_frame_id = base_frame_id;
     odom_trans.transform.translation.x = robot_pose_.translation()(0);
@@ -235,7 +236,7 @@ void CLaserOdometry2DNode::publish()
   //-------------------------------------------------
   //ROS_INFO("[rf2o] Publishing Odom Topic");
   nav_msgs::Odometry odom;
-  odom.header.stamp = ros::Time::now();
+  odom.header.stamp = current_scan_time + ros::Duration(1);
   odom.header.frame_id = odom_frame_id;
   //set the position
   odom.pose.pose.position.x = robot_pose_.translation()(0);

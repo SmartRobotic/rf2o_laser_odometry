@@ -22,17 +22,48 @@
 #include <iostream>
 #include <fstream>
 #include <numeric>
-
-// ROS headers
-#include <ros/ros.h>
-#include <nav_msgs/Odometry.h>
-#include <sensor_msgs/LaserScan.h>
+#include <vector>
+#include <time.h>
+#include <stdio.h>
 
 // Eigen headers
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 #include <unsupported/Eigen/MatrixFunctions>
 
+/**
+ * @brief Represents a laser scan data.
+ * 
+ * This struct contains information about a laser scan, including the ranges of the measured points,
+ * the minimum and maximum angles of the scan, and the angle increment between consecutive measurements.
+ */
+struct LaserScan {
+    std::vector<float> ranges;
+    float angle_min;
+    float angle_max;
+    float angle_increment;
+};
+
+int add(int a, int b);
+
+/**
+ * @brief Represents a pose in 2D space.
+ */
+struct Pose {
+  float x; /**< The x-coordinate of the pose. */
+  float y; /**< The y-coordinate of the pose. */
+  float theta; /**< The orientation angle of the pose. */
+  
+  /**
+   * @brief Represents the orientation of the pose.
+   */
+  struct Orientation {
+    float w; /**< The scalar component of the orientation quaternion. */
+    float x; /**< The x-component of the orientation quaternion. */
+    float y; /**< The y-component of the orientation quaternion. */
+    float z; /**< The z-component of the orientation quaternion. */
+  } orientation;
+};
 namespace rf2o {
 
 template <typename T>
@@ -77,12 +108,14 @@ public:
   CLaserOdometry2D();
   virtual ~CLaserOdometry2D() = default;
 
-  void init(const sensor_msgs::LaserScan& scan,
-            const geometry_msgs::Pose& initial_robot_pose);
+  int testab(int a, int b);
+
+  void init(const LaserScan& scan,
+            const Pose& initial_robot_pose);
 
   bool is_initialized();
 
-  bool odometryCalculation(const sensor_msgs::LaserScan& scan);
+  bool odometryCalculation(const LaserScan& scan);
 
   void setLaserPose(const Pose3d& laser_pose);
 
@@ -95,7 +128,7 @@ public:
 
 protected:
 
-  bool verbose, module_initialized, first_laser_scan;
+  bool verbose, module_initialized, first_laser_scan, lock_x_z;
 
   // Internal Data
   std::vector<Eigen::MatrixXf> range;
@@ -140,8 +173,8 @@ protected:
 
   double lin_speed, ang_speed;
 
-  ros::WallDuration	m_runtime;
-  ros::Time last_odom_time, current_scan_time;
+  time_t m_runtime;
+  time_t last_odom_time, current_scan_time;
 
   MatrixS31 kai_abs_;
   MatrixS31 kai_loc_;
