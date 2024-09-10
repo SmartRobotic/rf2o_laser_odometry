@@ -56,14 +56,13 @@ PYBIND11_MODULE(CLaserOdometry2D, m) {
         .def("getIncrementCovariance", &CLaserOdometry2D::getIncrementCovariance, "Get the covariance of the increment")
         .def("getPose", [](const CLaserOdometry2D& self) {
             // Convert Eigen::Isometry3d to Python-friendly format
-            Eigen::Isometry3d increment = self.getIncrement();
+            Eigen::Isometry3d pose = self.getPose();
             
             // Extract translation and rotation as numpy arrays
-            Eigen::Vector3d translation = increment.translation();
-            Eigen::Matrix3d rotation = increment.rotation();
+            Eigen::Vector3d translation = pose.translation();
+            Eigen::Matrix3d rotation = pose.rotation();
 
             // Return as a dictionary or tuple
             return py::make_tuple(translation, rotation);
-        }, "Get the current pose (const)")
-        .def("getPoseMutable", py::overload_cast<>(&CLaserOdometry2D::getPose), "Get the current pose (mutable)");
+        }, "Get the current pose (const)");
 }
