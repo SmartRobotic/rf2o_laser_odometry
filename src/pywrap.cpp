@@ -54,7 +54,7 @@ PYBIND11_MODULE(CLaserOdometry2D, m) {
             return py::make_tuple(translation, rotation);
         }, "Get the increment as a tuple of translation and rotation")
         .def("getIncrementCovariance", &CLaserOdometry2D::getIncrementCovariance, "Get the covariance of the increment")
-        .def("getPose", [](const CLaserOdometry2D& self) {
+        .def("getAbsoluteTranslationRotation", [](const CLaserOdometry2D& self) {
             // Convert Eigen::Isometry3d to Python-friendly format
             Eigen::Isometry3d pose = self.getPose();
             
@@ -64,5 +64,24 @@ PYBIND11_MODULE(CLaserOdometry2D, m) {
 
             // Return as a dictionary or tuple
             return py::make_tuple(translation, rotation);
-        }, "Get the current pose (const)");
+        }, "Get the current pose (const)")
+        .def("getPose", [](const CLaserOdometry2D& self) {
+            // Convert Eigen::Isometry3d to Pose object
+            Eigen::Isometry3d pose = self.getPose();
+            
+            // Create Pose object
+            Pose pose_obj;
+            pose_obj.x = pose.translation().x();
+            pose_obj.y = pose.translation().y();
+            pose_obj.theta = std::atan2(pose.rotation()(1, 0), pose.rotation()(0, 0));
+            
+            // Create Orientation object
+            Eigen::Quaterniond q(pose.rotation());
+            pose_obj.orientation.w = q.w();
+            pose_obj.orientation.x = q.x();
+            pose_obj.orientation.y = q.y();
+            pose_obj.orientation.z = q.z();
+
+            return pose_obj;
+        }, "Get the current pose as a Pose object");
 }
