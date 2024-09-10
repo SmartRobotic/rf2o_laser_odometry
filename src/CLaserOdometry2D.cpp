@@ -258,7 +258,7 @@ bool CLaserOdometry2D::odometryCalculation(const LaserScan& scan)
 
   m_runtime = time(NULL) - start;
 
-  printf("[rf2o] execution time (ms): %ld", m_runtime*1000);
+  // printf("[rf2o] execution time (ms): %ld", m_runtime*1000);
 
   //Update poses
   PoseUpdate();
@@ -945,18 +945,18 @@ void CLaserOdometry2D::PoseUpdate()
   kai_loc_old_(1) = -kai_abs_(0)*std::sin(phi) + kai_abs_(1)*std::cos(phi);
   kai_loc_old_(2) =  kai_abs_(2);
 
-  printf("[rf2o] LASERodom = [%f %f %f]\n",
-         laser_pose_.translation()(0),
-         laser_pose_.translation()(1),
-         rf2o::getYaw(laser_pose_.rotation()));
+  // printf("[rf2o] LASERodom = [%f %f %f]\n",
+  //        laser_pose_.translation()(0),
+  //        laser_pose_.translation()(1),
+  //        rf2o::getYaw(laser_pose_.rotation()));
 
   //Compose Transformations
   robot_pose_ = laser_pose_ * laser_pose_on_robot_inv_;
 
-  printf("[rf2o] BASEodom = [%f %f %f]\n",
-         robot_pose_.translation()(0),
-         robot_pose_.translation()(1),
-         rf2o::getYaw(robot_pose_.rotation()));
+  // printf("[rf2o] BASEodom = [%f %f %f]\n",
+  //        robot_pose_.translation()(0),
+  //        robot_pose_.translation()(1),
+  //        rf2o::getYaw(robot_pose_.rotation()));
 
   // Estimate linear/angular speeds (mandatory for base_local_planner)
   // last_scan -> the last scan received
