@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.4...3.18)
+cmake_minimum_required(VERSION 3.12...3.18)
 project(CLaserOdometry2D)
 
 find_package(pybind11 REQUIRED)
