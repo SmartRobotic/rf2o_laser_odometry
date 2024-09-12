@@ -6,7 +6,7 @@ find_package(pybind11 REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 # Add all relevant source files here
-add_library(CLaserOdometry2D MODULE src/pywrap.cpp src/CLaserOdometry2D.cpp)
+pybind11_add_module(CLaserOdometry2D MODULE src/pywrap.cpp src/CLaserOdometry2D.cpp)
 
 # Link against pybind11 and Eigen
 target_link_libraries(CLaserOdometry2D PRIVATE pybind11::module Eigen3::Eigen)
@@ -17,4 +17,12 @@ target_include_directories(CLaserOdometry2D PRIVATE ${PYBIND11_INCLUDE_DIRS} ${E
 # Set target properties for Python module
 set_target_properties(CLaserOdometry2D PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}" SUFFIX "${PYTHON_MODULE_EXTENSION}")
 
-install(TARGETS CLaserOdometry2D DESTINATION .)
+# Get the Python site-packages directory
+execute_process(
+    COMMAND ${Python3_EXECUTABLE} -c "import site; print(site.getsitepackages()[0])"
+    OUTPUT_VARIABLE PYTHON_SITE_PACKAGES
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+# Install the module to the Python site-packages directory
+install(TARGETS CLaserOdometry2D DESTINATION ${PYTHON_SITE_PACKAGES})
