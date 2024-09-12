@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.4...3.18)
 project(CLaserOdometry2D)
 
+find_package(Python 3.12 COMPONENTS Interpreter Development REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(Eigen3 REQUIRED)
-
-set (PYBIND11_PYTHON_VERSION "3.12")
 
 # Add all relevant source files here
 add_library(CLaserOdometry2D MODULE src/pywrap.cpp src/CLaserOdometry2D.cpp)
