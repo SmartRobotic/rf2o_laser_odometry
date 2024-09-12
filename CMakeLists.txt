@@ -16,3 +16,5 @@ target_include_directories(CLaserOdometry2D PRIVATE ${PYBIND11_INCLUDE_DIRS} ${E
 
 # Set target properties for Python module
 set_target_properties(CLaserOdometry2D PROPERTIES PREFIX "${PYTHON_MODULE_PREFIX}" SUFFIX "${PYTHON_MODULE_EXTENSION}")
+
+install(TARGETS CLaserOdometry2D DESTINATION COMPONENT python LIBRARY DESTINATION "lib/python3.12/site-packages" ARCHIVE DESTINATION "lib" RUNTIME DESTINATION "bin")
